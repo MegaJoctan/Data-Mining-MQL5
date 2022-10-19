@@ -49,7 +49,8 @@ void OnStart()
                        {1,2},
                        {4,9}
                      };
-*/
+*/ 
+
 ///*
    matrix DMatrix = {};
    DMatrix.Resize(bars, MATRIXDIMENSION); //columns determines the dimension of the dataset 1D won't be visualized properly
