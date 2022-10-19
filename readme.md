@@ -6,4 +6,4 @@
 
     Any contribution to the library will be appreciated
 
-    [BuyMeACoffee] (https://www.buymeacoffee.com/omegajoctan)
+    [BuyMeACoffee](https://www.buymeacoffee.com/omegajoctan)
