@@ -28,30 +28,16 @@ input group "ELBOW METHOD";
 input int init_clusters = 1;
 input int k_clusters = 10;
 
-input group "BARS & SYMBOL";
+input group "BARS";
 
-input int bars = 20;
-input string symbol = "#NQ100";
+input int bars = 20; 
 
 //+------------------------------------------------------------------+
 //| Script program start function                                    |
 //+------------------------------------------------------------------+
 void OnStart()
-  {
-//---
-/*
-    matrix DMatrix = { {2,10},
-                       {2,5},
-                       {8,4},
-                       {5,8},
-                       {7,5},
-                       {6,4},
-                       {1,2},
-                       {4,9}
-                     };
-*/ 
-
-///*
+  { 
+ 
    matrix DMatrix = {};
    DMatrix.Resize(bars, MATRIXDIMENSION); //columns determines the dimension of the dataset 1D won't be visualized properly
    
@@ -60,15 +46,13 @@ void OnStart()
    ulong start = 0; 
    for (ulong i=0; i<(ulong)MATRIXDIMENSION; i++) 
      {
-       column_v.CopyRates(symbol,PERIOD_CURRENT,COPY_RATES_CLOSE,start,bars);
+       column_v.CopyRates(Symbol(),PERIOD_CURRENT,COPY_RATES_CLOSE,start,bars);
        DMatrix.Col(column_v,i);
        
        start += bars;
-     }
-//*/
-//--- 
+     } 
      
-    //Print("D matrix ",DMatrix);
+//--- 
     
     MeanNormalization(DMatrix);
 
@@ -133,12 +117,10 @@ bool ScatterPlotsMatrix(
       
      
       for (ulong i=0; i<_matrix.Rows(); i++)
-        { 
-          //pol_reg.MatrixPrint(CurveMatrix,1);
+        {  
           x = _matrix.Row(i);
           
-          clustering.FilterZero(x); vectortoArray(x,x_arr);          
-           
+          clustering.FilterZero(x); vectortoArray(x,x_arr);        
           
           graph.CurveAdd(x_arr,CURVE_POINTS," cluster "+string(i+1));  
         }
