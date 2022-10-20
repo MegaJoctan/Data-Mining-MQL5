@@ -94,12 +94,8 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
           rand_ = rand_cluster ? (ulong)MathFloor(i*(n/m_clusters)) : i;
           rand_v = Matrix.Row(rand_); 
           
-          //Print("rand_ ",rand_);
-          
           InitialCentroids.Row(rand_v, i);
-        }
-     
-     //Print("Initial Centroids matrix\n",InitialCentroids);
+        } 
     
 //---
     
@@ -108,8 +104,7 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
 
      matrix rect_distance = {};  //matrix to store rectilinear distances
      rect_distance.Reshape(n, m_clusters);
-     
-     //rect_distance = Matrix - InitialCentroids;
+      
      
      vector v_matrix = {}, v_centroid = {};
      double output = 0;
@@ -117,8 +112,7 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
 //---
 
   for (int iter=0; iter<iterations; iter++)
-   {
-     //printf("\n<<<<< %d >>>>>\n",iter );
+   { 
      
      for (ulong i=0; i<rect_distance.Rows(); i++)
        for (ulong j=0; j<rect_distance.Cols(); j++)
@@ -130,12 +124,9 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
                for (ulong k=0; k<v_matrix.Size(); k++)
                     output += MathAbs(v_matrix[k] - v_centroid[k]); //Rectilinear distance
                
-               rect_distance[i][j] = output;
-               // Print("V centroid ",v_centroid," v matrix ", v_matrix," output ",output);       
+               rect_distance[i][j] = output;      
           }
-          
-       //Print("Rectilinear distance matrix rows ",rect_distance.Rows()," cols ",rect_distance.Cols(),"\n",rect_distance);
-      
+           
 //---  Assigning the Clusters
 
     matrix cluster_cent = {}; //cluster centroids
@@ -148,8 +139,7 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
           
           cluster_assign[i] = (double)cluster;
        }
-
-     //Print("Assigned clusters\n",cluster_assign);
+ 
      
      vector temp_cluster_assign = cluster_assign;
     
@@ -166,13 +156,9 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
                    if (cluster_assign[i] == temp_cluster_assign[j])
                      {        
                         classified = true;
-                                        
-                        //printf("cluster_assign[%d] %.5f cluster_assign[%d] %.5f",i,cluster_assign[i],j,temp_cluster_assign[j]);
-                        
+                                         
                         count++;
-                        
-                        //Print("cluster[",i,"] ",cluster_assign[j]," j ",j," count ",count," index ",index, " sum_count ",sum_count); 
-                        
+                         
                          cluster_comb_m.Resize(count, m_cols);
                          
                          cluster_comb_m.Row(Matrix.Row(j) , count-1); 
@@ -196,16 +182,11 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
                  MatrixToVector(cluster_comb_m, cluster_comb_v);
                  
                  if (iter == iterations-1) clustered_matrix.Row(cluster_comb_v, index);    
-
-                 
-                 //Print("clusters combined matrix\n",cluster_comb_m); 
-                 //Print("clusters combined all vector ",index,"\n",cluster_comb_v,"\nClustered Matrix\n",clustered_matrix);
-                 
+ 
+ 
                  index++;  
 //---
-           
-                  //Print("cluster_cent matrix\n",cluster_cent); //cluster centroids matrix
-                  
+            
                   vector x_y_z = {0,0};
                   ZeroMemory(rand_v);
                   
@@ -213,8 +194,6 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
                      {
                         x_y_z.Resize(cluster_cent.Cols());
                         rand_v = cluster_cent.Col(k);
-                        
-                        //Print("randv_ cluster column\n",rand_v);
                         
                         x_y_z[k] = rand_v.Mean();
                      }
@@ -225,11 +204,9 @@ void CKMeans::KMeansClustering(matrix &clustered_matrix,matrix &centroids,int it
                   
            if (index >= m_clusters) break;
        } 
-      
-       //Print("New Centroids\n",InitialCentroids,"\n <<<< >>>>\n");
+       
     } //end of iterations
-    
-    //Print("\nclustered Matrix\n",clustered_matrix);
+     
     ZeroMemory(centroids);
     centroids.Copy(InitialCentroids);
  } 
@@ -240,6 +217,7 @@ bool CKMeans::ErrMsg(errors err)
  {
    switch(err)
      {
+      
       case  KM_ERR001:
         printf("%s Clusters not matching in Size ",EnumToString(KM_ERR001));
         break;
@@ -277,9 +255,8 @@ void CKMeans::ElbowMethod(const int initial_k=1, int total_k=10, bool showPlot =
       double kArray[]; ArrayResize(kArray,total_k);
          
       for (int k=initial_k, count_k=0; k<ArraySize(WCSS)+initial_k; k++, count_k++)   
-        {
-         //Print("<< k >>",k);
-         
+        { 
+        
          wcss = 0;
          
          m_clusters = k;
@@ -287,23 +264,17 @@ void CKMeans::ElbowMethod(const int initial_k=1, int total_k=10, bool showPlot =
          KMeansClustering(clustered_mat,_centroids);
          
          for (ulong i=0; i<_centroids.Rows(); i++)
-            {
-               //Print("\n<<< >>>\n");
-               
+            {                
                centroid_v = _centroids.Row(i);
                
                x_y_z = clustered_mat.Row(i);
                FilterZero(x_y_z);
-               
-               //Print("x_y_z ",x_y_z," centroids_v ",centroid_v);
+                
                
                    for (ulong j=0; j<x_y_z.Size()/m_cols; j++)
                      {
                      
-                       VectorCopy(x_y_z,short_v,uint(j*m_cols),(uint)m_cols);
-                       //Print("short v ",short_v," centroid ",centroid_v);
-                       
-                       //centroid_v = MathPow(centroid_v,2); short_v = MathPow(short_v,2);
+                       VectorCopy(x_y_z,short_v,uint(j*m_cols),(uint)m_cols); 
 
 //---                WCSS ( within cluster sum of squared residuals )
 
@@ -311,15 +282,12 @@ void CKMeans::ElbowMethod(const int initial_k=1, int total_k=10, bool showPlot =
                        
                        minus_v = MathPow(minus_v,2);
                        
-                       wcss += minus_v.Sum();
-                       
-                       //Print("Minus v ",minus_v," sum ",minus_v.Sum()," wcss ",wcss);
+                       wcss += minus_v.Sum(); 
                        
                      }
                    
             }  
-            
-          //Print("WCSS ",wcss," count ",count_k);     
+               
           WCSS[count_k] = wcss;  
           kArray[count_k] = k;
        }
